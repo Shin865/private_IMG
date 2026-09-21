@@ -693,7 +693,7 @@ async def batch_status_endpoint(job_id: str):
 @router.post("/remove-background")
 async def remove_background_endpoint(
     file: UploadFile = File(...),
-    model: str = Form("u2net"),
+    model: str = Form("isnet-general-use"),
     background_type: str = Form("transparent"),
     background_color: str = Form("#FFFFFF"),
     alpha_matting: bool = Form(False),

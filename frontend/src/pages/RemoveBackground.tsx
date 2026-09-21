@@ -19,9 +19,9 @@ const BG_OPTIONS = [
 
 export default function RemoveBackground() {
   return (
-    <ToolPageWrapper title="Remove Background" subtitle="AI-powered background removal using U2-Net (runs locally)">
+    <ToolPageWrapper title="Remove Background" subtitle="AI-powered background removal (runs locally)">
       {({ file, setResult, processing, setProcessing, setError }) => {
-        const [model, setModel] = useState('u2net');
+        const [model, setModel] = useState('isnet-general-use');
         const [bgType, setBgType] = useState('transparent');
         const [bgColor, setBgColor] = useState('#FFFFFF');
         const [alphaMatte, setAlphaMatte] = useState(false);

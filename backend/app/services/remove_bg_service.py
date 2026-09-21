@@ -9,25 +9,24 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-# Lazy-loaded session to avoid slow startup
-_session = None
+# Lazy-loaded sessions to avoid slow startup and allow multiple models
+_sessions = {}
 
-
-def _get_session():
+def _get_session(model: str = "u2net"):
     """Lazy-load rembg session (downloads model on first use)."""
-    global _session
-    if _session is None:
+    global _sessions
+    if model not in _sessions:
         try:
             from rembg import new_session
-            _session = new_session("u2net")
-            logger.info("rembg session loaded successfully (u2net model)")
+            _sessions[model] = new_session(model)
+            logger.info(f"rembg session loaded successfully ({model} model)")
         except Exception as e:
-            logger.error(f"Failed to load rembg session: {e}")
+            logger.error(f"Failed to load rembg session for {model}: {e}")
             raise RuntimeError(
-                "Background removal model not available. "
+                f"Background removal model '{model}' not available. "
                 "Make sure rembg is installed: pip install rembg[cpu]"
             ) from e
-    return _session
+    return _sessions[model]
 
 
 def remove_background(
@@ -54,7 +53,7 @@ def remove_background(
     """
     from rembg import remove
 
-    session = _get_session()
+    session = _get_session(model)
 
     # Convert to bytes for rembg
     img_bytes = io.BytesIO()
