@@ -145,26 +145,11 @@ export default function Home() {
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-purple-600 flex items-center justify-center shadow-lg shadow-primary-500/25">
             <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M20.4 14.5 16 10 4 20"/></svg>
           </div>
-          <h1 className="page-title text-4xl">Local Image Tool</h1>
+          <h1 className="page-title text-4xl">Image Tool</h1>
         </div>
         <p className="page-subtitle text-lg max-w-2xl">
-          Powerful image processing — 100% offline, no cloud, no uploads. 
-          Your images never leave your computer.
+          All your image editing needs in one place.
         </p>
-
-        {/* Status badges */}
-        <div className="flex gap-3 mt-4">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-green-500/10 text-green-400 border border-green-500/20">
-            <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse-soft" />
-            Offline Ready
-          </span>
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-primary-500/10 text-primary-400 border border-primary-500/20">
-            🔒 Private & Secure
-          </span>
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-purple-500/10 text-purple-400 border border-purple-500/20">
-            ⚡ AI Powered
-          </span>
-        </div>
       </div>
 
       {/* Tool Grid */}

@@ -185,10 +185,7 @@ export default function Layout({ children }: LayoutProps) {
         {/* Footer */}
         <div className="px-6 py-4 border-t border-surface-800">
           <div className="text-xs text-surface-500">
-            Local Image Tool v0.1
-          </div>
-          <div className="text-xs text-surface-600 mt-0.5">
-            100% Offline • No Cloud
+            Image Tool
           </div>
         </div>
       </aside>
