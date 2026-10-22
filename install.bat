@@ -1,69 +1,103 @@
 @echo off
-:: Mengambil lokasi folder tempat file .bat ini diletakkan secara dinamis
-set "BASE_DIR=%~dp0"
+setlocal EnableExtensions
 
-echo ===================================================
-echo SETUP DAN INSTALASI PROJECT (UNIVERSAL)
-echo Mendeteksi lokasi project di: %BASE_DIR%
-echo ===================================================
+REM ============================================================
+REM  install.bat
+REM  Base direktori = folder tempat file ini berada (root projek),
+REM  jadi bisa dijalankan dari drive/lokasi mana pun.
+REM ============================================================
 
-cd /d "%BASE_DIR%"
+set "ROOT=%~dp0"
+set "BACKEND_DIR=%ROOT%backend"
+set "FRONTEND_DIR=%ROOT%frontend"
 
-:: 1. Cek dan Install Python
-python --version >nul 2>&1
-if %errorlevel% neq 0 (
-    echo [INFO] Python tidak ditemukan. Memulai instalasi Python...
-    winget install -e --id Python.Python.3.11 --accept-package-agreements --accept-source-agreements
-)
-
-:: 2. Cek dan Install Node.js
-npm --version >nul 2>&1
-if %errorlevel% neq 0 (
-    echo [INFO] Node.js tidak ditemukan. Memulai instalasi Node.js...
-    winget install -e --id OpenJS.NodeJS --accept-package-agreements --accept-source-agreements
-)
-
+echo ============================================
+echo  Root projek : %ROOT%
+echo ============================================
 echo.
-echo ===================================================
-echo MENGINSTAL DEPENDENSI PROJECT
-echo ===================================================
 
-:: SETUP BACKEND
-if not exist "%BASE_DIR%backend" (
-    echo [ERROR] Folder 'backend' tidak ditemukan di %BASE_DIR%
-    echo Pastikan file .bat ini berada sejajar dengan folder backend.
-    pause
-    exit /b
+REM ---------- Cek prasyarat ----------
+where python >nul 2>&1
+if errorlevel 1 (
+    echo [ERROR] Python tidak ditemukan di PATH. Install Python terlebih dahulu.
+    goto :fail
 )
 
-echo [1/2] Menyiapkan Backend (Virtual Environment ^& Dependencies)...
-cd /d "%BASE_DIR%backend"
-echo Membuat virtual environment bernama 'venv'...
-python -m venv venv
-echo Mengaktifkan venv...
-call venv\Scripts\activate
-echo Menginstal dependencies Python...
-call pip install -r requirements.txt
-deactivate
+where npm >nul 2>&1
+if errorlevel 1 (
+    echo [ERROR] npm tidak ditemukan di PATH. Install Node.js terlebih dahulu.
+    goto :fail
+)
 
+if not exist "%BACKEND_DIR%\" (
+    echo [ERROR] Folder backend tidak ditemukan: %BACKEND_DIR%
+    goto :fail
+)
+
+if not exist "%FRONTEND_DIR%\" (
+    echo [ERROR] Folder frontend tidak ditemukan: %FRONTEND_DIR%
+    goto :fail
+)
+
+REM ---------- Backend ----------
+echo [1/2] Setup Backend...
+pushd "%BACKEND_DIR%"
+
+if not exist "venv\Scripts\activate.bat" (
+    echo - Membuat virtual environment...
+    python -m venv venv
+    if errorlevel 1 (
+        echo [ERROR] Gagal membuat virtual environment.
+        popd
+        goto :fail
+    )
+) else (
+    echo - Virtual environment sudah ada, dilewati.
+)
+
+call "venv\Scripts\activate.bat"
+
+echo - Menginstall dependensi Python...
+python -m pip install -r requirements.txt
+if errorlevel 1 (
+    echo [ERROR] Gagal menginstall requirements.txt
+    call deactivate
+    popd
+    goto :fail
+)
+
+call deactivate
+popd
+echo [OK] Backend selesai.
 echo.
-:: SETUP FRONTEND
-if not exist "%BASE_DIR%frontend" (
-    echo [ERROR] Folder 'frontend' tidak ditemukan di %BASE_DIR%
-    pause
-    exit /b
-)
 
-echo [2/2] Menginstal dependencies Frontend (Node.js)...
-cd /d "%BASE_DIR%frontend"
-echo Menginstal package dasar...
+REM ---------- Frontend ----------
+echo [2/2] Setup Frontend...
+pushd "%FRONTEND_DIR%"
+
+echo - Menginstall dependensi npm...
 call npm install
-echo Memastikan Vite terinstal...
-call npm install vite --save-dev
+if errorlevel 1 (
+    echo [ERROR] Gagal menjalankan npm install
+    popd
+    goto :fail
+)
 
+popd
+echo [OK] Frontend selesai.
 echo.
-echo ===================================================
-echo INSTALASI SELESAI!
-echo Silakan jalankan '2_run.bat' untuk memulai aplikasi.
-echo ===================================================
+
+echo ============================================
+echo  Instalasi selesai!
+echo ============================================
+echo.
 pause
+endlocal
+exit /b 0
+
+:fail
+echo.
+echo Instalasi dihentikan karena ada error.
+pause
+endlocal
+exit /b 1
