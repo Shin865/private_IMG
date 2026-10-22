@@ -23,6 +23,10 @@ if exist "%BASE_DIR%frontend" (
     echo [ERROR] Folder frontend tidak ditemukan!
 )
 
+:: Buka Browser
+timeout /t 4 /nobreak >nul
+start http://localhost:5173
+
 echo.
 echo Proses selesai. Jika berhasil, dua jendela terminal baru akan terbuka.
 echo Jendela ini bisa Anda tutup.
